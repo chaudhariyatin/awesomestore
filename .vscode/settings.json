@@ -1,0 +1,5 @@
+{
+    "emmet.showSuggestionsAsSnippets": true,
+    "git.enableStatusBarSync": false,
+    "emmet.triggerExpansionOnTab": true
+}
