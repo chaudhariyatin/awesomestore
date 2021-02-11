@@ -19,3 +19,101 @@ export const getProduct = (productId) => {
       });
   };
 };
+
+export const addTocart = (cartItem) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    // make async call to database
+    const firestore = getFirestore();
+    // const profile = getState().firebase.profile;
+    // const authorId = getState().firebase.auth.uid;
+    firestore
+      .collection("cart")
+      .add({
+        ...cartItem,
+        createdAt: new Date(),
+      })
+      .then(() => {
+        dispatch({ type: "ADD_TO_CART_SUCCESS", cartItem });
+      })
+      .catch((err) => {
+        dispatch({ type: "ADD_TO_CART_ERROR", err });
+      });
+  };
+};
+
+export const removeProduct = (cartId) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firestore = getFirestore();
+    firestore
+      .collection("cart")
+      .doc(cartId)
+      .delete()
+      .then((res) => {
+        dispatch({ type: "DELETE_CART_PRODUCT" });
+      })
+      .catch((err) => {
+        dispatch({ type: "DELETE_CART_ERROR", err });
+      });
+  };
+};
+
+export const addProductQuantity = (id, num, price) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firestore = getFirestore();
+    firestore
+      .collection("cart")
+      .doc(id)
+      .update({
+        quantity: num + 1,
+        totalPrice: price * (num + 1),
+      })
+      .then((res) => {
+        dispatch({ type: "UPDATE_PRODUCT_QUANTITY" });
+      })
+      .catch((err) => {
+        dispatch({ type: "UPDATE_PRODUCT_ERROR", err });
+      });
+  };
+};
+
+export const subProductQuantity = (id, num, price) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firestore = getFirestore();
+    if (num === 0) {
+      firestore
+        .collection("cart")
+        .doc(id)
+        .update({
+          quantity: 0,
+          totalPrice: 0,
+        })
+        .then((res) => {
+          dispatch({ type: "UPDATE_PRODUCT_QUANTITY" });
+        })
+        .catch((err) => {
+          dispatch({ type: "UPDATE_PRODUCT_ERROR", err });
+        });
+    } else {
+      firestore
+        .collection("cart")
+        .doc(id)
+        .update({
+          quantity: num - 1,
+          totalPrice: price * (num - 1),
+        })
+        .then((res) => {
+          dispatch({ type: "UPDATE_PRODUCT_QUANTITY" });
+        })
+        .catch((err) => {
+          dispatch({ type: "UPDATE_PRODUCT_ERROR", err });
+        });
+    }
+  };
+};
+
+// export const addTocart = (cartItem) => {
+//   return {
+//     type: "ADD_CART_SUCCESS",
+//     cartItem: cartItem,
+//   };
+// };

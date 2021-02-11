@@ -26,11 +26,6 @@ const NavbarWrapper = () => {
       </Navbar.Brand>
       {/* <div className="mr-auto"></div> */}
       <Nav className="mr-auto">
-        {/* <Link>
-          <Nav.Link href="#home" className="px-5">
-            Men
-          </Nav.Link>
-        </Link> */}
         <NavLink
           to="/mensapperals"
           activeClassName="selected"

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   Col,
   Container,
@@ -9,13 +10,17 @@ import {
   ToggleButton,
 } from "react-bootstrap";
 import { connect } from "react-redux";
-import { getProduct } from "../../store/actions/productActions";
+import {
+  addTocart,
+  getProduct,
+  removeProduct,
+} from "../../store/actions/productActions";
 import SpinnerWrapper from "../UI/SpinnerWrapper";
 
 const ProductDetail = (props) => {
   const productId = props.match.params.id;
   const [checked, setChecked] = useState(false);
-  const [radioValue, setRadioValue] = useState("1");
+  const [radioValue, setRadioValue] = useState("S");
 
   const radios = [
     { name: "S", value: "S" },
@@ -28,11 +33,22 @@ const ProductDetail = (props) => {
   useEffect(() => {
     props.getProduct(productId);
   }, []);
-
+  console.log(productId);
   // let productDetails = props.products.find((product) => {
   //   return product.id === productId;
   // });
-  console.log(radioValue);
+
+  const addProductHandler = () => {
+    props.addToCart({
+      productId: productId,
+      image: product.image,
+      title: product.title,
+      price: product.price,
+      size: radioValue,
+      quantity: 1,
+      totalPrice: product.price,
+    });
+  };
 
   if (!product) {
     return <SpinnerWrapper />;
@@ -82,7 +98,7 @@ const ProductDetail = (props) => {
             </div>
           </Row>
           <Row>
-            <Button>Add To Cart</Button>
+            <Button onClick={addProductHandler}>Add To Cart</Button>
           </Row>
           <Row className="mt-5">
             <h6>Product Description</h6>
@@ -98,6 +114,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getProduct: (id) => {
       dispatch(getProduct(id));
+    },
+    addToCart: (cartItem) => {
+      dispatch(addTocart(cartItem));
     },
   };
 };

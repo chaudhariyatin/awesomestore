@@ -38,7 +38,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-//export default connect(mapStateToProps)(Home);
 export default compose(
   connect(mapStateToProps),
   firestoreConnect((ownProps) => [
