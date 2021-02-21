@@ -1,3 +1,7 @@
+# Awesome Store
+
+E-commerce app made with React js and Firebase
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
