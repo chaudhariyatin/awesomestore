@@ -3,8 +3,7 @@ import { Container, Row } from "react-bootstrap";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import ProductCard from "../Product/ProductCard";
-import { firestoreConnect, isLoaded } from "react-redux-firebase";
-import { compose } from "redux";
+import { isLoaded } from "react-redux-firebase";
 import SpinnerWrapper from "../UI/SpinnerWrapper";
 
 const WomensProducts = (props) => {
@@ -19,6 +18,7 @@ const WomensProducts = (props) => {
 
   return (
     <Container>
+      <h6 className="text-muted ml-5 my-3">Home/Women T-shirts</h6>
       <Row className="justify-content-md-center sm-center">
         {womensClothing.map((product) => (
           <Link
@@ -35,17 +35,9 @@ const WomensProducts = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  // console.log(state.firestore.ordered);
   return {
     products: state.firestore.ordered.products,
   };
 };
 
-export default compose(
-  connect(mapStateToProps),
-  firestoreConnect((ownProps) => [
-    {
-      collection: "products",
-    },
-  ])
-)(WomensProducts);
+export default connect(mapStateToProps)(WomensProducts);

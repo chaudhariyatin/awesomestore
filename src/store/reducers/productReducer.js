@@ -1,6 +1,9 @@
 const initialState = {
   products: [],
   cart: [],
+  mes: "",
+  product: {},
+  query: "",
 };
 
 const productReducer = (state = initialState, action) => {
@@ -13,8 +16,14 @@ const productReducer = (state = initialState, action) => {
       };
 
     case "GET_PRODUCT_ERROR":
-      console.log(action.err);
       return state;
+
+    case "GET_PRODUCT_SEARCH_QUERY":
+      console.log(action.query);
+      return {
+        ...state,
+        query: action.query,
+      };
 
     case "ADD_TO_CART_SUCCESS":
       return state;
@@ -27,6 +36,27 @@ const productReducer = (state = initialState, action) => {
       return state;
     case "UPDATE_PRODUCT_QUANTITY":
       return state;
+    case "STAGED_CART_PRODUCTS":
+      return {
+        ...state,
+        cart: [...action.cartItems],
+      };
+    case "ORDER_SUCCESS":
+      return {
+        ...state,
+        mes: action.message,
+        err: false,
+      };
+    case "ORDER_FAILED":
+      return {
+        ...state,
+        mes: action.err.message,
+      };
+    case "SET_ERR":
+      return {
+        ...state,
+        err: action.err,
+      };
   }
   return state;
 };

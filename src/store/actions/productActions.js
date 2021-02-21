@@ -1,10 +1,17 @@
+export const getQuery = (query) => {
+  console.log(query);
+  return (dispatch) =>
+    dispatch({
+      type: "GET_PRODUCT_SEARCH_QUERY",
+      query,
+    });
+};
+
 export const getProduct = (productId) => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     // make async call to database
     const firestore = getFirestore();
 
-    //   const profile = getState().firebase.profile;
-    //   const authorId = getState().firebase.auth.uid;
     firestore
       .collection("products")
       .doc(productId)
@@ -25,11 +32,12 @@ export const addTocart = (cartItem) => {
     // make async call to database
     const firestore = getFirestore();
     // const profile = getState().firebase.profile;
-    // const authorId = getState().firebase.auth.uid;
+    const userId = getState().firebase.auth.uid;
     firestore
       .collection("cart")
       .add({
         ...cartItem,
+        userId: userId,
         createdAt: new Date(),
       })
       .then(() => {
@@ -111,9 +119,10 @@ export const subProductQuantity = (id, num, price) => {
   };
 };
 
-// export const addTocart = (cartItem) => {
-//   return {
-//     type: "ADD_CART_SUCCESS",
-//     cartItem: cartItem,
-//   };
-// };
+export const addingStagedCart = (cartItems) => {
+  return (dispatch) =>
+    dispatch({
+      type: "STAGED_CART_PRODUCTS",
+      cartItems: cartItems,
+    });
+};

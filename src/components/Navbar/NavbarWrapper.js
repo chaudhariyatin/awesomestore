@@ -7,24 +7,32 @@ import {
   Nav,
   Button,
 } from "react-bootstrap";
+import { connect } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import SignedInLinks from "./SignedInLinks";
 import SignedOutLinks from "./SignedOutLinks";
+import { firestoreConnect, isLoaded } from "react-redux-firebase";
+import { compose } from "redux";
+import SearchForm from "./SearchForm";
 
-const NavbarWrapper = () => {
+const NavbarWrapper = (props) => {
+  const { auth, profile } = props;
+  const links = auth.uid ? (
+    <SignedInLinks profile={profile} />
+  ) : (
+    <SignedOutLinks />
+  );
   return (
     <Navbar
       style={{
         backgroundColor: "white",
         border: "1px solid grey",
-        // paddingLeft: "200px",
       }}
       className="ps-5"
     >
       <Navbar.Brand href="/" className="px-5">
         Awesome Store
       </Navbar.Brand>
-      {/* <div className="mr-auto"></div> */}
       <Nav className="mr-auto">
         <NavLink
           to="/mensapperals"
@@ -55,17 +63,24 @@ const NavbarWrapper = () => {
           Women
         </NavLink>
       </Nav>
-      <Form inline>
-        <FormControl
-          type="text"
-          placeholder="Search"
-          className="navbar-search"
-        />
-      </Form>
-      <SignedInLinks />
-      {/* <SignedOutLinks /> */}
+      <SearchForm />
+      {links}
     </Navbar>
   );
 };
 
-export default NavbarWrapper;
+const mapStateToProps = (state) => {
+  return {
+    auth: state.firebase.auth,
+    profile: state.firebase.profile,
+  };
+};
+
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect((ownProps) => [
+    {
+      collection: "products",
+    },
+  ])
+)(NavbarWrapper);

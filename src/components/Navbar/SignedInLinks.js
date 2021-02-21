@@ -1,12 +1,14 @@
 import React from "react";
 import { Nav } from "react-bootstrap";
+import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { signOut } from "../../store/actions/authAction";
 
-const SignedInLinks = () => {
+const SignedInLinks = (props) => {
   return (
     <Nav className="" style={{ paddingLeft: "120px" }}>
       <NavLink
-        to="/"
+        to="/mycart"
         activeClassName="selected"
         activeStyle={{
           color: "#D9D55B",
@@ -15,37 +17,50 @@ const SignedInLinks = () => {
           color: "#00000080",
           textDecoration: "none",
         }}
-        className=" pt-2"
+        className="pt-2"
       >
-        Log Out
+        Cart
       </NavLink>
       <NavLink
-        to="/mycart"
-        activeClassName="selected"
+        to="/myorders"
         activeClassName="selected"
         activeStyle={{
           color: "#D9D55B",
         }}
+        style={{
+          color: "#00000080",
+          textDecoration: "none",
+        }}
+        className="pt-2 px-3"
+      >
+        Orders
+      </NavLink>
+      <NavLink
+        to="/"
+        activeClassName="selected"
         style={{
           color: "#00000080",
           textDecoration: "none",
         }}
         className="px-3 pt-2"
+        onClick={props.signOut}
       >
-        Cart
+        Log Out
       </NavLink>
-
-      {/* <Nav.Link href="#Cart" className="roundedCircle">
-        YC
-      </Nav.Link> */}
       <h1
         className="btn btn-floating border-rad  pink lighten-1"
-        style={{ backgroundColor: "pink" }}
+        style={{ backgroundColor: "#D9D55B" }}
       >
-        YC
+        {props.profile.initials}
       </h1>
     </Nav>
   );
 };
 
-export default SignedInLinks;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signOut: () => dispatch(signOut()),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(SignedInLinks);

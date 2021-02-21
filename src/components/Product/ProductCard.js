@@ -16,8 +16,6 @@ const ProductCard = ({ product }) => {
             &#8377;400
           </span>
         </Card.Text>
-
-        {/* <Button variant="primary">Add to Cart</Button> */}
       </Card.Body>
     </Card>
   );

@@ -10,17 +10,21 @@ import {
   ToggleButton,
 } from "react-bootstrap";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import {
   addTocart,
   getProduct,
   removeProduct,
 } from "../../store/actions/productActions";
 import SpinnerWrapper from "../UI/SpinnerWrapper";
+import { useHistory } from "react-router-dom";
 
 const ProductDetail = (props) => {
   const productId = props.match.params.id;
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState("S");
+  const [btnState, setBtnState] = useState(false);
+  const history = useHistory();
 
   const radios = [
     { name: "S", value: "S" },
@@ -33,10 +37,6 @@ const ProductDetail = (props) => {
   useEffect(() => {
     props.getProduct(productId);
   }, []);
-  console.log(productId);
-  // let productDetails = props.products.find((product) => {
-  //   return product.id === productId;
-  // });
 
   const addProductHandler = () => {
     props.addToCart({
@@ -48,6 +48,11 @@ const ProductDetail = (props) => {
       quantity: 1,
       totalPrice: product.price,
     });
+    setBtnState(true);
+  };
+
+  const redirectHandler = () => {
+    history.push("/mycart");
   };
 
   if (!product) {
@@ -62,7 +67,7 @@ const ProductDetail = (props) => {
             src={product.image}
             rounded
             className="lg-5 md-3"
-            style={{ height: "500px" }}
+            style={{ height: "30rem" }}
           />
         </Col>
         <Col xs={12} md={6} className="m">
@@ -97,8 +102,11 @@ const ProductDetail = (props) => {
               </ButtonGroup>
             </div>
           </Row>
-          <Row>
-            <Button onClick={addProductHandler}>Add To Cart</Button>
+          <Row className="">
+            {!btnState && (
+              <Button onClick={addProductHandler}>Add To Cart</Button>
+            )}
+            {btnState && <Button onClick={redirectHandler}>Go To Cart</Button>}
           </Row>
           <Row className="mt-5">
             <h6>Product Description</h6>

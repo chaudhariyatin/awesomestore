@@ -9,15 +9,17 @@ import {
   removeProduct,
   addProductQuantity,
   subProductQuantity,
+  addingStagedCart,
 } from "../../store/actions/productActions";
 import firebase from "../../config/fbConfig";
 import { getFirestore } from "redux-firestore";
-import { Link } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 
 const Cart = (props) => {
   const { cartItems } = props;
   const [cart, setCart] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const history = useHistory();
 
   const removeProductHandler = (id) => {
     props.removeProductFromCart(id);
@@ -33,14 +35,11 @@ const Cart = (props) => {
     }
   };
 
-  useEffect(() => {
-    const firestore = getFirestore();
-    firestore
-      .collection("cart")
-      .onSnapshot((onSnapshot) =>
-        console.log(onSnapshot.docs.map((doc) => doc.data()))
-      );
-  }, [quantity]);
+  const checkoutCartHandler = () => {
+    props.addToStagging(cartItems);
+    history.push("/checkout");
+  };
+  const { userId } = props;
 
   let purchaseAmount = 0;
   let totalAmount = 0;
@@ -55,13 +54,29 @@ const Cart = (props) => {
     });
   }
 
+  const { auth, authError } = props;
+  if (!props.userId) {
+    history.push("/");
+  }
+  if (!isLoaded(props.userId)) {
+    return <SpinnerWrapper />;
+  }
   if (!isLoaded(cartItems)) {
     return <SpinnerWrapper />;
   }
   let displayState = (
     <>
-      <span className="mr-auto">Sub Total: &#8377;{purchaseAmount}</span>
-      <Button>Go To Checkout</Button>
+      <span className="mr-auto text-muted font-weight-bold">
+        Sub Total: &#8377;{purchaseAmount}
+      </span>
+      <Button
+        variant="outline-primary"
+        size="sm"
+        className=""
+        onClick={checkoutCartHandler}
+      >
+        Go To Checkout
+      </Button>
     </>
   );
   if (cartItems.length === 0) {
@@ -84,8 +99,9 @@ const Cart = (props) => {
   }
 
   return (
-    <Container>
-      <Row xs={12} md={12} lg={7} xl={7}>
+    <Container style={{ width: "50rem" }}>
+      <h3 className="text-center text-muted my-2">Your Cart</h3>
+      <Row className="justify-content-center">
         {cartItems.map((item) => (
           <CartItem
             key={item.id}
@@ -97,13 +113,7 @@ const Cart = (props) => {
           />
         ))}
       </Row>
-      <Row
-        xs={12}
-        md={12}
-        lg={12}
-        xl={12}
-        className=" align-items-center mx-auto mb-5"
-      >
+      <Row xl={12} lg={12} md={12} sm={12} xs={12} className="my-4">
         {displayState}
       </Row>
     </Container>
@@ -112,7 +122,9 @@ const Cart = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    cartItems: state.firestore.ordered.cart,
+    cartItems: state.firestore.ordered.myCart,
+    userId: state.firebase.auth.uid,
+    auth: state.firebase.auth,
   };
 };
 
@@ -127,6 +139,9 @@ const mapDispatchToProps = (dispatch) => {
     subProductQuantity: (id, num, price) => {
       dispatch(subProductQuantity(id, num, price));
     },
+    addToStagging: (cartItems) => {
+      dispatch(addingStagedCart(cartItems));
+    },
   };
 };
 
@@ -135,6 +150,8 @@ export default compose(
   firestoreConnect((ownProps) => [
     {
       collection: "cart",
+      where: [["userId", "==", ownProps.userId]],
+      storeAs: "myCart",
     },
   ])
 )(Cart);
