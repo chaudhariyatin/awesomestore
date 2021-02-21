@@ -2,6 +2,13 @@
 
 E-commerce app made with React js and Firebase
 
+# How it works
+
+Basically, frontend built with React js and React-Bootstrap. Backend is handled by Firebase-Firestore.
+User Authentication handled by Firebase Auth.
+User can create account using email and password, can add products to cart and also gets invoices of ordered data.
+![awesome store app](/public/awesomestore.gif)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
